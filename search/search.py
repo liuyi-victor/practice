@@ -126,18 +126,34 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 	
     frontier = util.Queue()
-    #actions = List()
     visited = set()
-    frontier.push(problem.getStartState())
-    while frontier.isEmpty():
-	node = frontier.pop().nextState
-	if problem.isGoalState(node):
-		return node
-	visited.add(node.nextState)
-	for successor in problem.getSuccessors(node):
-		if successor not in frontier and successor.nextState not in visited:
-			frontier.push(successor)
-    return
+    #costs = {}
+    if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
+	return []
+    visited.add(problem.getStartState())
+    for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
+	actions = []
+	actions.append(firstlevel[1])
+	#costs[firstlevel.nextState] = 1
+	frontier.push((firstlevel, actions))
+
+    while frontier.isEmpty() == False:
+	node = frontier.pop()
+	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
+	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+		continue
+	if problem.isGoalState(node[0][0]):
+		print "The path found is: ", node[1]
+		return node[1]
+	visited.add(node[0][0])
+	for successor in problem.getSuccessors(node[0][0]):
+		if successor[0] not in visited:
+			actions = []
+			actions.extend(node[1])
+			actions.append(successor[1])
+			frontier.push((successor, actions))
+
+    return []
     # util.raiseNotDefined()
 
 def uniformCostSearch(problem):
