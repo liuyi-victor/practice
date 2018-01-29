@@ -87,38 +87,39 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    #print "Start:", problem.getStartState()
-    #print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    #print "Start's successors:", problem.getSuccessors(problem.getStartState())
 
     frontier = util.Stack()
-    actions = []
     visited = set()
-    if problem.isGoalState(problem.getStartState()):
-	return actions
-
+    if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
+	return []
+    visited.add(problem.getStartState())
     #next = 
-    for firstlevel in problem.getSuccessors(problem.getStartState()):
-	frontier.push(firstlevel)
-    print "start looking for path"
+    for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
+	actions = []
+	actions.append(firstlevel[1])
+	frontier.push((firstlevel, actions))
+    #print "start looking for path"
     while frontier.isEmpty() == False:
-    	node = frontier.pop()				# node is a 3 element object returned by getSuccessor()
+    	node = frontier.pop()				# node is a pair object returned where the first element is its state and the second element is the saved actions path
 	# node[0] should be the coordinates of the state (int, int)
-	visited.add(node)
-	actions.append(node[1])
-	if problem.isGoalState(node[0]):
-		return actions
-	# print "This is node[0]: ", node[0]
 
-	if len(problem.getSuccessors(node[0])) < 1:	# destination unreachable from the current path
-		actions.pop()
-	else:
-		next = problem.getSuccessors(node[0])
-		for successor in next:
-			if successor not in visited:
-				frontier.push(successor)
-    return actions
-    # util.raiseNotDefined()
+	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+		continue
+	#actions.append(node[1])
+	if problem.isGoalState(node[0][0]):
+		print "The frontier is: ", frontier.list
+		print "goal node is: ", node[0][0]
+		print "Found path to the goal: ", node[1]
+		return node[1]
+	visited.add(node[0][0])
+	for successor in problem.getSuccessors((node[0])[0]):
+		if successor[0] not in visited:
+			actions = []
+			actions.extend(node[1])
+			actions.append(successor[1])
+			frontier.push((successor, actions))
+			#parent[successor[0]] = node[1]
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -126,13 +127,15 @@ def breadthFirstSearch(problem):
 	
     frontier = util.Queue()
     #actions = List()
+    visited = set()
     frontier.push(problem.getStartState())
     while frontier.isEmpty():
 	node = frontier.pop().nextState
 	if problem.isGoalState(node):
 		return node
+	visited.add(node.nextState)
 	for successor in problem.getSuccessors(node):
-		if not successor in frontier:
+		if successor not in frontier and successor.nextState not in visited:
 			frontier.push(successor)
     return
     # util.raiseNotDefined()
