@@ -190,39 +190,6 @@ def uniformCostSearch(problem):
 			actions.append(successor[1])
 			frontier.push((successor, actions, cost+successor[2]), cost+successor[2])
     return []
-'''
-    frontier = util.PriorityQueue()
-    save = {}
-    visited = set()
-    #costs = {}
-    if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
-	return []
-    visited.add(problem.getStartState())
-    for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
-	actions = []
-	actions.append(firstlevel[1])
-	save[firstlevel[0]] = actions
-	frontier.push(firstlevel[0],1)
-
-    while frontier.isEmpty() == False:
-	node = frontier.pop()
-	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
-	if node[0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
-		continue
-	if problem.isGoalState(node[0]):
-		print "The path found is: ", save[node[0]]
-		return save[node[0]]
-	visited.add(node[0])
-	for successor in problem.getSuccessors(node[0]):
-		if successor[0] not in visited:
-			if successor[0] in frontier.heap and :
-				frontier.update(successor[0], node[1] + 1)
-			else:
-				actions = []
-				actions.extend(save[node[0]])
-				actions.append(successor[1])
-				frontier.update(successor[0], node[1] + 1)
-'''
 
 
 def nullHeuristic(state, problem=None):
@@ -235,7 +202,37 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    visited = set()
+    #costs = {}
+    if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
+	return []
+    visited.add(problem.getStartState())
+    for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
+	actions = []
+	actions.append(firstlevel[1])
+	#costs[firstlevel.nextState] = 1
+	frontier.push((firstlevel, actions, firstlevel[2]), heuristic(firstlevel[0], problem)+firstlevel[2])
+
+    while frontier.isEmpty() == False:
+	node = frontier.pop()
+	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
+	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+		continue
+	#print "the cost is: ", node[2]
+	#print "point is: ", node[0][0]
+	if problem.isGoalState(node[0][0]):
+		print "The path found is: ", node[1]
+		return node[1]
+	visited.add(node[0][0])
+	cost = node[2]
+	for successor in problem.getSuccessors(node[0][0]):
+		if successor[0] not in visited:
+			actions = []
+			actions.extend(node[1])
+			actions.append(successor[1])
+			frontier.push((successor, actions, cost+successor[2]), cost+successor[2]+heuristic(successor[0], problem))
+    return []
 
 
 # Abbreviations
