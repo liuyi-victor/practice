@@ -288,21 +288,28 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+	self._expandedCorners = 0
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+	if self.startingPosition in self.corners:
+		return (self.startingPosition, [visitedCorner])	#visitedCorner.add(self.startingPosition)
+	else:
+		return (self.startingPosition, [])
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        for corner in self.corners:
+        	if corner not in state[1]:
+            		return False
+	return True
 
     def getSuccessors(self, state):
         """
@@ -325,6 +332,17 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+	    visited = []			#this is the set of corners that has been visited
+	    visited.extend(state[1])
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+		nextState = ((nextx, nexty), visited)
+		if (nextx, nexty) in self.corners and (nextx, nexty) not in state[1]:		#since cannot use sets, need to check for duplicates
+                	nextState[1].append((nextx, nexty))
+                #cost = self.costFn(nextState)
+                successors.append( ( nextState, action, 1) )
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -359,8 +377,37 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
+    reminders = []
+    minimum = float("inf")
+    position = state[0]
+    for corner in corners:
+	if corner not in state[1]:
+		reminders.append(corner)
+    
+    for remain in reminders:
+	straightline = (((position[0] - remain[0]) ** 2 + (position[1] - remain[1]) ** 2 ) ** 0.5)
+	if straightline < minimum:
+		minimum = straightline
+    return minimum + spanningTree(reminders)
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    #return 0 # Default to trivial solution
+def spanningTree(graph):
+	''' 
+	builds a minimum spanning tree and returns the sum of edge weights that make up the spanning tree
+	takes on a list of coordinates as nodes in the graph
+	'''
+	visited = []
+	#edges = []
+	total = 0
+	while (len(graph) > 0):
+		minimumedge = float("inf")
+		for i in range(1, len(graph) - 1):
+			straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
+			if straightline < minimumedge:
+				minimumedge = straightline
+		visited.append(graph.pop(0))
+		total = total + minimumedge
+	return total
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -451,8 +498,17 @@ def foodHeuristic(state, problem):
 
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    if len(foodGrid.asList()) <= 0:
+	return 0
+    else:
+	nodes = []
+	if position in foodGrid.asList():
+		nodes.extend(foodGrid.asList())
+		return spanningTree(nodes)
+	else:
+		nodes.append(position)
+		nodes.extend(foodGrid.asList())
+		return spanningTree(nodes)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"

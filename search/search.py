@@ -126,28 +126,31 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 	
     frontier = util.Queue()
-    visited = set()
+    visited = []	#set()
     #costs = {}
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
-    visited.add(problem.getStartState())
+    print "start state is: ", problem.getStartState()
+    #visited.add(problem.getStartState())
+    visited.append(problem.getStartState())
     for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
 	actions = []
 	actions.append(firstlevel[1])
-	#costs[firstlevel.nextState] = 1
 	frontier.push((firstlevel, actions))
 
     while frontier.isEmpty() == False:
 	node = frontier.pop()
-	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
 	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
 		continue
+	#print "the state is: ", node[0][0]
 	if problem.isGoalState(node[0][0]):
 		print "The path found is: ", node[1]
 		return node[1]
-	visited.add(node[0][0])
+	#visited.add(node[0][0])
+	visited.append(node[0][0])
 	for successor in problem.getSuccessors(node[0][0]):
 		if successor[0] not in visited:
+			#print "successor of ",node[0][0], "is: ", successor[0]
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])
@@ -203,11 +206,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    visited = set()
+
+    visited = []
+    #visited = set()
     #costs = {}
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
-    visited.add(problem.getStartState())
+
+    visited.append(problem.getStartState())
+    #visited.add(problem.getStartState())
     for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
 	actions = []
 	actions.append(firstlevel[1])
@@ -224,7 +231,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 	if problem.isGoalState(node[0][0]):
 		print "The path found is: ", node[1]
 		return node[1]
-	visited.add(node[0][0])
+
+	visited.append(node[0][0])
+	#visited.add(node[0][0])
 	cost = node[2]
 	for successor in problem.getSuccessors(node[0][0]):
 		if successor[0] not in visited:
