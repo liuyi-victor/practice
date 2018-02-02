@@ -608,9 +608,42 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
+	return search.uniformCostSearch(problem)
+	'''
+	frontier = util.PriorityQueue()
+	visited = set()
+	#costs = {}
+	if problem.isGoalState(startPosition):		# check if the starting state is the goal
+		return []
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+	visited.add(startPosition)
+	for firstlevel in problem.getSuccessors(startPosition):	# put the successors of the starter to the frontier
+		actions = []
+		actions.append(firstlevel[1])
+		#costs[firstlevel.nextState] = 1
+		frontier.push((firstlevel, actions, firstlevel[2]), firstlevel[2])
+
+	while frontier.isEmpty() == False:
+		node = frontier.pop()
+		#if node[0][0] in costs and node[2] <= costs[node[0][0]]
+		if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+			continue
+
+		#print "the cost is: ", node[2]
+		#print "point is: ", node[0][0]
+		if problem.isGoalState(node[0][0]):
+			print "The path found is: ", node[1]
+			return node[1]
+		visited.add(node[0][0])
+		cost = node[2]
+		for successor in problem.getSuccessors(node[0][0]):
+			if successor[0] not in visited:
+				actions = []
+				actions.extend(node[1])
+				actions.append(successor[1])
+				frontier.push((successor, actions, cost+successor[2]), cost+successor[2])
+	return []
+	'''
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -644,9 +677,11 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+	#print "the food variable is: ", self.food
+	if state in self.food.asList():
+		return True
+	else:
+		return False
 
 def mazeDistance(point1, point2, gameState):
     """
