@@ -113,7 +113,7 @@ def depthFirstSearch(problem):
 		return node[1]
 	visited.add(node[0][0])
 	for successor in problem.getSuccessors((node[0])[0]):
-		if successor[0] not in visited:
+		if successor[0] not in node[1]:
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])
