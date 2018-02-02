@@ -383,31 +383,102 @@ def cornersHeuristic(state, problem):
     for corner in corners:
 	if corner not in state[1]:
 		reminders.append(corner)
-    
+    if len(reminders) == 0:
+	return 0
     for remain in reminders:
 	straightline = (((position[0] - remain[0]) ** 2 + (position[1] - remain[1]) ** 2 ) ** 0.5)
 	if straightline < minimum:
 		minimum = straightline
-    return minimum + spanningTree(reminders)
+    #print "the minimum distance to a corner is: ", minimum
+    guess = minimum + spanningTree(reminders)
+    #print "the heuristic is: ", guess
+    return guess
     "*** YOUR CODE HERE ***"
     #return 0 # Default to trivial solution
+    
 def spanningTree(graph):
-	''' 
-	builds a minimum spanning tree and returns the sum of edge weights that make up the spanning tree
-	takes on a list of coordinates as nodes in the graph
-	'''
-	visited = []
-	#edges = []
-	total = 0
-	while (len(graph) > 0):
-		minimumedge = float("inf")
-		for i in range(1, len(graph) - 1):
-			straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
-			if straightline < minimumedge:
-				minimumedge = straightline
-		visited.append(graph.pop(0))
-		total = total + minimumedge
-	return total
+    ''' 
+    builds a minimum spanning tree and returns the sum of edge weights that make up the spanning tree
+    takes on a list of coordinates as nodes in the graph
+    
+    visited = []
+
+    total = 0
+    while (len(graph) > 0):
+	minimumedge = float("inf")
+	for i in range(1, len(graph) - 1):
+		straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
+		if straightline < minimumedge:
+			minimumedge = straightline
+	visited.append(graph.pop(0))
+	total = total + minimumedge
+    return total
+    '''
+
+    if len(graph) < 2:
+	return 0
+    index = -1
+    total = 0
+    head = graph.pop(0)
+    nodeCost = []
+    visited = []
+    minimum = float("inf")
+    #print "the graph length is: ", len(graph)
+    #print "the graph nodes are: ", graph
+    for i in range(0, len(graph)):
+	cost = (((graph[i][0] - head[0]) ** 2 + (graph[i][1] - head[1]) ** 2 ) ** 0.5)
+    	nodeCost.append([graph[i], cost])
+	if cost < minimum:
+		minimum = cost
+		index = i
+    visited.append(head)
+    #print "the nodeCost length is: ", len(nodeCost)
+    #print "the nodeCost is: ", nodeCost
+    while (len(graph) > 1):
+	next, weight = nodeCost.pop(index)
+	visited.append(graph.pop(graph.index(next)))
+	#print "the nodeCost list is: ", nodeCost
+	#print "the minimum index node is: ", index
+	minimum = float("inf")	#assume the first one on the list is the minimum cost
+	index = -1
+	for i in range(0, len(nodeCost)):
+		straightline = ((((nodeCost[i][0])[0] - next[0]) ** 2 + ((nodeCost[i][0])[1] - next[1]) ** 2 ) ** 0.5)	#relaxation of edges
+		if straightline < nodeCost[i][1]:
+			nodeCost[i][1] = straightline
+		if nodeCost[i][1] < minimum:
+			#print "found a new minimum edge with weight: ", straightline
+			minimum = nodeCost[i][1]
+			index = i
+	total = total + weight
+    next, weight = nodeCost.pop()
+    visited.append(graph.pop(graph.index(next)))
+    total = total + weight
+    #print "the total is: ", total
+    return total
+    
+    
+
+    '''
+    index = graph.index(cost.pop())
+    graph.pop(index)
+    minimumedge = float("inf")
+    for i in range(1, len(graph) - 1):
+	straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
+	if straightline < minimumedge:
+		print "found a new minimum edge with weight: ", straightline
+		minimumedge = straightline
+    visited.append(graph.pop(0))
+    total = total + minimumedge
+
+    for i in range(0, len(graph)-1)
+	edges.append(row)
+	edge[i][i] = 0
+
+    visited = []
+    edges = []
+    row = [float("inf")] * len(graph)
+    '''
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
