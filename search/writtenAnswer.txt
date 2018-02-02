@@ -1,0 +1,11 @@
+CSC384 Assignment 1 Yi Liu(999736889)
+Part II
+1. 
+	(a) The branching factor of the successor function if the Pacman is in the corner is 2, since the Pacman is against the walls in the other two directions
+	(b) The branching factor of the successor function if the Pacman is in the middle (assuming no interior walls) is 4, since the Pacman is free to move in all 4 directions
+	(c) Maximum possible depth = log2(N*N)
+
+2.
+	(a) n = O(4^(ctotal/cmin + 1))
+	    This is because ctotal/cmin represent the 
+	(b)  
