@@ -3,9 +3,23 @@ Part II
 1. 
 	(a) The branching factor of the successor function if the Pacman is in the corner is 2, since the Pacman is against the walls in the other two directions
 	(b) The branching factor of the successor function if the Pacman is in the middle (assuming no interior walls) is 4, since the Pacman is free to move in all 4 directions
-	(c) Maximum possible depth = log2(N*N)
+	(c) Maximum possible depth = O( log_base2(N*N) ) because there are at least two successors for a position on the Pacman maze
 
 2.
 	(a) n = O(4^(ctotal/cmin + 1))
-	    This is because ctotal/cmin represent the 
-	(b)  
+	    This is because ctotal/cmin represent the maximum depth to get to the goal on the optimal path and each of these steps will expands to at most 4 successors
+	(b)  From the equation above, lower bound on the total cost of solution if given space limit of n is cmin * (log_base4(n) - 1) 
+3.
+	(a) Yes, this is exactly the A* algorithm
+	(b) No, running A* algorithm on f(n) = g(n) + 3*h(n) may not yield an optimal solution since in this case 3*h(n) becomes the actual heuristic and even though h(n) may be admissible, 3*h(n) can overestimate the optimal path's cost and may not be admissible. The 
+	(c) Yes
+4.
+	Basically this is a tradeoff between the heuristic's accuracy performance and the time required to generate the constraint
+	(a) Heuristic h1 will be used in situations when time is not a constraint in the search but it is desirable to expand the minimum set of states
+	(b) Heuristic h2 will be used in situations when the search is needs to be done given a time constraint and accuracy of the heuristic becomes less important with respect to time
+
+
+
+
+
+	(b) Yes, this will still yield the optimal solution even though 3 * h(n) may make the heuristic not admissible. This is because the heuristic h(n) is monotonic and admissible to begin with, and 3*h(n) will means that the actual heuristic for all of the nodes will be bounded by 3h*(n) where h*(n) is the cost of the optimal path from node n. 
