@@ -11,15 +11,9 @@ Part II
 	(b)  From the equation above, lower bound on the total cost of solution if given space limit of n is cmin * (log_base4(n) - 1) 
 3.
 	(a) Yes, this is exactly the A* algorithm
-	(b) No, running A* algorithm on f(n) = g(n) + 3*h(n) may not yield an optimal solution since in this case 3*h(n) becomes the actual heuristic and even though h(n) may be admissible, 3*h(n) can overestimate the optimal path's cost and may not be admissible. The 
-	(c) Yes
+	(b) No, running A* algorithm on f(n) = g(n) + 3*h(n) may not yield an optimal solution since in this case 3*h(n) becomes the actual heuristic and even though h(n) may be admissible, 3*h(n) can overestimate the optimal path's cost and may not be admissible. The ratio between cost of returned path/cost of optimal path is 3 because if not considering the g(n) term in the f(n) equation, the 3*h(n) term will overestimate the optimal path from any node to the goal by at most 3 times. When the sub-optimal path is found as it is been popped from the frontier, the value of f'(n) = g'(n)+3f'(n) for the optimal path is still on the open list or may not even have been push to the open list. Therefore taking the maximum possible value of 3*h(n) for a monotonic heuristic h(n) is 3*cost of optimal.
+	(c) Yes, as the heuristic is admissible and monotone and multiply the cost by 3 would not effect how A* algorithm chooses the node to expand during the search
 4.
 	Basically this is a tradeoff between the heuristic's accuracy performance and the time required to generate the constraint
 	(a) Heuristic h1 will be used in situations when time is not a constraint in the search but it is desirable to expand the minimum set of states
 	(b) Heuristic h2 will be used in situations when the search is needs to be done given a time constraint and accuracy of the heuristic becomes less important with respect to time
-
-
-
-
-
-	(b) Yes, this will still yield the optimal solution even though 3 * h(n) may make the heuristic not admissible. This is because the heuristic h(n) is monotonic and admissible to begin with, and 3*h(n) will means that the actual heuristic for all of the nodes will be bounded by 3h*(n) where h*(n) is the cost of the optimal path from node n. 

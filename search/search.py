@@ -93,32 +93,24 @@ def depthFirstSearch(problem):
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
     visited.add(problem.getStartState())
-    #next = 
     for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
 	actions = []
 	actions.append(firstlevel[1])
 	frontier.push((firstlevel, actions))
-    #print "start looking for path"
+    # start looking for the path to the goal
     while frontier.isEmpty() == False:
-    	node = frontier.pop()				# node is a pair object returned where the first element is its state and the second element is the saved actions path
-	# node[0] should be the coordinates of the state (int, int)
-
-	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+    	node = frontier.pop()				# node is a pair object where the first element is its state and the second element is the path list
+	if node[0][0] in visited:			# do not re-explore a node on the frontier if already visited by some other path
 		continue
-	#actions.append(node[1])
 	if problem.isGoalState(node[0][0]):
-		print "The frontier is: ", frontier.list
-		print "goal node is: ", node[0][0]
-		print "Found path to the goal: ", node[1]
 		return node[1]
 	visited.add(node[0][0])
-	for successor in problem.getSuccessors((node[0])[0]):
-		if successor[0] not in node[1]:
+	for successor in problem.getSuccessors((node[0])[0]):	# put the successors at the front of the frontier
+		if successor[0] not in node[1]:			# path checking
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])
 			frontier.push((successor, actions))
-			#parent[successor[0]] = node[1]
     return []
 
 def breadthFirstSearch(problem):
@@ -126,8 +118,7 @@ def breadthFirstSearch(problem):
     "*** YOUR CODE HERE ***"
 	
     frontier = util.Queue()
-    visited = []	#set()
-    #costs = {}
+    visited = []
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
     print "start state is: ", problem.getStartState()
@@ -140,17 +131,14 @@ def breadthFirstSearch(problem):
 
     while frontier.isEmpty() == False:
 	node = frontier.pop()
-	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
+	if node[0][0] in visited:		# do not re-explore a node on the frontier if already visited by some other path
 		continue
-	#print "the state is: ", node[0][0]
 	if problem.isGoalState(node[0][0]):
-		print "The path found is: ", node[1]
 		return node[1]
 	#visited.add(node[0][0])
 	visited.append(node[0][0])
-	for successor in problem.getSuccessors(node[0][0]):
-		if successor[0] not in visited:
-			#print "successor of ",node[0][0], "is: ", successor[0]
+	for successor in problem.getSuccessors(node[0][0]):	# put the successors at the end of the frontier
+		if successor[0] not in visited:			# cycle checking
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])
@@ -164,30 +152,24 @@ def uniformCostSearch(problem):
     
     frontier = util.PriorityQueue()
     visited = set()
-    #costs = {}
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
     visited.add(problem.getStartState())
     for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
 	actions = []
 	actions.append(firstlevel[1])
-	#costs[firstlevel.nextState] = 1
 	frontier.push((firstlevel, actions, firstlevel[2]), firstlevel[2])
 
     while frontier.isEmpty() == False:
 	node = frontier.pop()
-	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
 	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
 		continue
-	#print "the cost is: ", node[2]
-	#print "point is: ", node[0][0]
 	if problem.isGoalState(node[0][0]):
-		print "The path found is: ", node[1]
 		return node[1]
 	visited.add(node[0][0])
 	cost = node[2]
-	for successor in problem.getSuccessors(node[0][0]):
-		if successor[0] not in visited:
+	for successor in problem.getSuccessors(node[0][0]):	# put the unexplored successors in frontier ordered based on their cost
+		if successor[0] not in visited:			# cycle checkng
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])
@@ -209,7 +191,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     visited = []
     #visited = set()
-    #costs = {}
     if problem.isGoalState(problem.getStartState()):		# check if the starting state is the goal
 	return []
 
@@ -218,25 +199,19 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     for firstlevel in problem.getSuccessors(problem.getStartState()):	# put the successors of the starter to the frontier
 	actions = []
 	actions.append(firstlevel[1])
-	#costs[firstlevel.nextState] = 1
 	frontier.push((firstlevel, actions, firstlevel[2]), heuristic(firstlevel[0], problem)+firstlevel[2])
 
     while frontier.isEmpty() == False:
 	node = frontier.pop()
-	#if node[0][0] in costs and node[2] <= costs[node[0][0]]
 	if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
 		continue
-	#print "the cost is: ", node[2]
-	#print "point is: ", node[0][0]
 	if problem.isGoalState(node[0][0]):
-		print "The path found is: ", node[1]
 		return node[1]
-
 	visited.append(node[0][0])
 	#visited.add(node[0][0])
 	cost = node[2]
-	for successor in problem.getSuccessors(node[0][0]):
-		if successor[0] not in visited:
+	for successor in problem.getSuccessors(node[0][0]):	# put the unexplored successors to the frontier ordered based on their cost+heuristic values
+		if successor[0] not in visited:			# cycle checking
 			actions = []
 			actions.extend(node[1])
 			actions.append(successor[1])

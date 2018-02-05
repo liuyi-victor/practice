@@ -383,38 +383,17 @@ def cornersHeuristic(state, problem):
     for corner in corners:
 	if corner not in state[1]:
 		reminders.append(corner)
-    if len(reminders) == 0:
+    if len(reminders) == 0:	# if all corners are visited, then goal state is reached and heuristic should be zero
 	return 0
     for remain in reminders:
 	straightline = (((position[0] - remain[0]) ** 2 + (position[1] - remain[1]) ** 2 ) ** 0.5)
 	if straightline < minimum:
 		minimum = straightline
-    #print "the minimum distance to a corner is: ", minimum
     guess = minimum + spanningTree(reminders)
-    #print "the heuristic is: ", guess
     return guess
-    "*** YOUR CODE HERE ***"
-    #return 0 # Default to trivial solution
     
 def spanningTree(graph):
-    ''' 
-    builds a minimum spanning tree and returns the sum of edge weights that make up the spanning tree
-    takes on a list of coordinates as nodes in the graph
-    
-    visited = []
-
-    total = 0
-    while (len(graph) > 0):
-	minimumedge = float("inf")
-	for i in range(1, len(graph) - 1):
-		straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
-		if straightline < minimumedge:
-			minimumedge = straightline
-	visited.append(graph.pop(0))
-	total = total + minimumedge
-    return total
-    '''
-
+    # applying the prim's algorithm to construct a minimum spanning tree with the first node as the root
     if len(graph) < 2:
 	return 0
     index = -1
@@ -423,22 +402,19 @@ def spanningTree(graph):
     nodeCost = []
     visited = []
     minimum = float("inf")
-    #print "the graph length is: ", len(graph)
-    #print "the graph nodes are: ", graph
-    for i in range(0, len(graph)):
+
+    for i in range(0, len(graph)):		# initialize the list of nodes to the straight line distance from first node
 	cost = (((graph[i][0] - head[0]) ** 2 + (graph[i][1] - head[1]) ** 2 ) ** 0.5)
     	nodeCost.append([graph[i], cost])
 	if cost < minimum:
 		minimum = cost
 		index = i
     visited.append(head)
-    #print "the nodeCost length is: ", len(nodeCost)
-    #print "the nodeCost is: ", nodeCost
-    while (len(graph) > 1):
+
+    while (len(graph) > 1):			# continuously relax the edges and popping off the list the minimum edged node to expand the spanning tree by 1 in each iteration
 	next, weight = nodeCost.pop(index)
 	visited.append(graph.pop(graph.index(next)))
-	#print "the nodeCost list is: ", nodeCost
-	#print "the minimum index node is: ", index
+
 	minimum = float("inf")	#assume the first one on the list is the minimum cost
 	index = -1
 	for i in range(0, len(nodeCost)):
@@ -446,38 +422,14 @@ def spanningTree(graph):
 		if straightline < nodeCost[i][1]:
 			nodeCost[i][1] = straightline
 		if nodeCost[i][1] < minimum:
-			#print "found a new minimum edge with weight: ", straightline
 			minimum = nodeCost[i][1]
 			index = i
 	total = total + weight
     next, weight = nodeCost.pop()
     visited.append(graph.pop(graph.index(next)))
     total = total + weight
-    #print "the total is: ", total
     return total
-    
-    
-
-    '''
-    index = graph.index(cost.pop())
-    graph.pop(index)
-    minimumedge = float("inf")
-    for i in range(1, len(graph) - 1):
-	straightline = (((graph[i][0] - graph[0][0]) ** 2 + (graph[i][1] - graph[0][1]) ** 2 ) ** 0.5)
-	if straightline < minimumedge:
-		print "found a new minimum edge with weight: ", straightline
-		minimumedge = straightline
-    visited.append(graph.pop(0))
-    total = total + minimumedge
-
-    for i in range(0, len(graph)-1)
-	edges.append(row)
-	edge[i][i] = 0
-
-    visited = []
-    edges = []
-    row = [float("inf")] * len(graph)
-    '''
+  
 
 
 class AStarCornersAgent(SearchAgent):
@@ -609,41 +561,6 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
 	return search.uniformCostSearch(problem)
-	'''
-	frontier = util.PriorityQueue()
-	visited = set()
-	#costs = {}
-	if problem.isGoalState(startPosition):		# check if the starting state is the goal
-		return []
-
-	visited.add(startPosition)
-	for firstlevel in problem.getSuccessors(startPosition):	# put the successors of the starter to the frontier
-		actions = []
-		actions.append(firstlevel[1])
-		#costs[firstlevel.nextState] = 1
-		frontier.push((firstlevel, actions, firstlevel[2]), firstlevel[2])
-
-	while frontier.isEmpty() == False:
-		node = frontier.pop()
-		#if node[0][0] in costs and node[2] <= costs[node[0][0]]
-		if node[0][0] in visited:		#do not re-explore a node on the frontier if already visited by some other path
-			continue
-
-		#print "the cost is: ", node[2]
-		#print "point is: ", node[0][0]
-		if problem.isGoalState(node[0][0]):
-			print "The path found is: ", node[1]
-			return node[1]
-		visited.add(node[0][0])
-		cost = node[2]
-		for successor in problem.getSuccessors(node[0][0]):
-			if successor[0] not in visited:
-				actions = []
-				actions.extend(node[1])
-				actions.append(successor[1])
-				frontier.push((successor, actions, cost+successor[2]), cost+successor[2])
-	return []
-	'''
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -677,7 +594,6 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
-	#print "the food variable is: ", self.food
 	if state in self.food.asList():
 		return True
 	else:
