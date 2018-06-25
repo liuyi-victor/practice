@@ -1,0 +1,7 @@
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+
+def import_data():
+	
